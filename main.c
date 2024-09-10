@@ -40,11 +40,63 @@ enum
     OP_LEA,  //LOAD EFFECTIVE ADDRESS
     OP_TRAP  //EXECUTE TRAP
     
-  }
+  };
   
 enum
 {
   FL_POS = 1<<0, // POSITIVE
   FL_ZRO = 1<<1, //ZERO
   FL_NEG = 1<<2
+};
+
+uint16 sign_extend(uint16 x, int bit_count)
+{
+  if(x>>(bit_count-1) & 1){
+    x |= (0xFFFF<<bit_count);
+  }
+
+  return x;
+}
+
+void update_flags(uint16 r){
+
+  if(reg[r] == 0){
+    reg[R_COND] = FL_ZRO;
+  }
+  else if(reg[r]>>15){
+    reg[R_COND] = FL_NEG;
+  }
+  else{
+    reg[R_COND] = FL_POS;
+  }
+}
+
+
+
+int main (int argc, const char* argv[])
+{
+  // laod arguments
+  // setup
+  // since only one condition flag should be set at any given time,
+  // set the Z flag
+  reg[R_COND] = FL_ZRO;
+
+  //set the PC starting position
+  // 0x3000 is the default
+
+  enum{PC_START = 0x3000};
+  reg[R_PC] = PC_START;
+
+  int running = 1;
+  while(running)
+    {
+      // FETCH THE INSTRUCTION
+      uint16 instr = mem_read(reg[R_PC]++);
+      uint16 op = instr>>12;
+
+      switch(op)
+	{
+	  
+	}
+    }
 }
