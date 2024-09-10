@@ -41,3 +41,10 @@ enum
     OP_TRAP  //EXECUTE TRAP
     
   }
+  
+enum
+{
+  FL_POS = 1<<0, // POSITIVE
+  FL_ZRO = 1<<1, //ZERO
+  FL_NEG = 1<<2
+}
