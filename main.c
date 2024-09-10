@@ -1,5 +1,5 @@
 #include <stdint.h>
-#define MEMORY_MAX(1<<16)
+#define MEMORY_MAX (1<<16)
 typedef uint16_t uint16;
 
 uint16 memory[MEMORY_MAX];  // 65536 LOCATIONS IN RAM
@@ -77,6 +77,7 @@ int main (int argc, const char* argv[])
 {
   // laod arguments
   // setup
+  
   // since only one condition flag should be set at any given time,
   // set the Z flag
   reg[R_COND] = FL_ZRO;
@@ -91,10 +92,10 @@ int main (int argc, const char* argv[])
   while(running)
     {
       // FETCH THE INSTRUCTION
-      uint16 instr = mem_read(reg[R_PC]++);
-      uint16 op = instr>>12;
+      //      uint16 instr = mem_read(reg[R_PC]++);
+      //      uint16 op = instr>>12;
 
-      switch(op)
+      //      switch(op)
 	{
 	  
 	}
