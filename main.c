@@ -21,7 +21,23 @@ enum
 
 uint16 reg[R_COUNT]; // registers
 
-
-
-
-
+enum
+  {
+    OP_BR = 0, // BRACH
+    OP_ADD,  //ADD
+    OP_LD,  //LOAD
+    OP_ST,  // STORE
+    OP_JSR,  // JUMP REGISTER
+    OP_AND,  // BITWISE AND 
+    OP_LDR,  // LOAD REGISTER
+    OP_STR,  // STORE REGISTER
+    OP_RTI,  // UNUSED
+    OP_NOT,  // BITWISE NOT
+    OP_LDI,  //LOAD INDIRECT
+    OP_STI,  // STORE INDIRECT
+    OP_JMP,  //JUMP
+    OP_RES,  //RESERVED (UNUSED)
+    OP_LEA,  //LOAD EFFECTIVE ADDRESS
+    OP_TRAP  //EXECUTE TRAP
+    
+  }
