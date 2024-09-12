@@ -1,11 +1,42 @@
 #include "opcodes.h"
 
-// mem_read
 
+// sign extend
+uint16 sign_extend(uint16 x, int bit_count)
+{
+  if(x>>(bit_count-1) & 1){
+    x |= (0xFFFF<<bit_count);
+  }
+  return x;
+}
+
+// update flags
+void update_flags(uint16 r)
+{
+  if(reg[r] == 0){
+    reg[R_COND] = FL_ZRO;
+  }
+  else if(reg[r]>>15){
+    reg[R_COND] = FL_NEG;
+  }
+  else{
+    reg[R_COND] = FL_POS;
+  }
+}
+
+
+// mem_read
 uint16 mem_read(uint16 instruction)
 {
     return instruction;
 }
+
+void mem_write(uint16 address, uint16 reg)
+{}
+
+
+
+/*======== OPERATIONS===========*/
 
 // ADD
 void ADD(uint16 instr)
@@ -29,24 +60,8 @@ void ADD(uint16 instr)
       uint16 r2 = instr & 0x7;
       reg[r0] = reg[r1] + reg[r2];
     }
-
   update_flags(r0);
 }
-
-// load indirect
-void LDI(uint16 instr)
-{
-  // dest register
-  uint16 r0 = (instr >> 9) & 0x7;
-
-  // PCoffset9
-  uint16 pc_offset = sign_extend(instr & 0x1FF, 9);
-
-  // add pc_offset to the current PC, look at that memory to get the final address
-  reg[r0] = mem_read(mem_read(reg[R_PC]+pc_offset));
-  update_flags(r0);
-}
-
 
 // bad opcode
 void BAD_OPCODE()
@@ -70,9 +85,7 @@ void AND(uint16 instr)
         uint16 r2 = instr & 0x7;
         reg[r0] = reg[r1] & reg[r2];
     }
-
     update_flags(r0);
-
 }
 
 // bitwise not - flips the each bit
@@ -94,7 +107,6 @@ void BR(uint16 instr)
     {
         reg[R_PC] += pc_offset;
     }
-
 }
 
 // jump
@@ -121,7 +133,6 @@ void JSR(uint16 instr)
         uint16 r1 = (instr >> 6) & 0x7;
         reg[R_PC] = reg[r1];
     }
-
 }
 
 // load => loads the data from a given address
@@ -133,7 +144,23 @@ void LD(uint16 instr)
     update_flags(r0);
 }
 
-// load registe
+
+// load indirect
+void LDI(uint16 instr)
+{
+  // dest register
+  uint16 r0 = (instr >> 9) & 0x7;
+
+  // PCoffset9
+  uint16 pc_offset = sign_extend(instr & 0x1FF, 9);
+
+  // add pc_offset to the current PC, look at that memory to get the final address
+  reg[r0] = mem_read(mem_read(reg[R_PC]+pc_offset));
+  update_flags(r0);
+}
+
+
+// load register
 void LDR(uint16 instr)
 {
     uint16 r0 = (instr >> 9) & 0x7;
@@ -141,5 +168,39 @@ void LDR(uint16 instr)
     uint16 offset = sign_extend((instr & 0x3F), 6);
     reg[r0] = mem_read(reg[r1] + offset);
     update_flags(r0);
+}
 
+// LEA => load effective address
+void LEA(uint16 instr)
+{
+    uint16 r0 = (instr >> 9) & 0x7;
+    uint16 pc_offset = sign_extend((instr & 0x1FF), 9);
+
+    reg[r0] = reg[R_PC] + pc_offset;
+    update_flags(r0);
+}
+
+// store
+void ST(uint16 instr)
+{
+    uint16 r0 = (instr >> 9) & 0x7;
+    uint16 pc_offset = sign_extend((instr & 0x1FF),9);
+    mem_write(reg[R_PC] + pc_offset, reg[r0]);
+}
+
+// Store indirect
+void STI(uint16 instr)
+{
+    uint16 r0 = (instr >> 9) & 0x7;
+    uint16 pc_offset = sign_extend(instr & 0x1FF, 9);
+    mem_write(mem_read(reg[R_PC] + pc_offset), reg[r0]);
+}
+
+// store register
+void STR(uint16 instr)
+{
+    uint16 r0 = (instr >> 9) & 0x7;
+    uint16 r1 = (instr >> 6) & 0x7;
+    uint16 offset = sign_extend(instr & 0x3F, 6);
+    mem_write(reg[r1] + offset, reg[r0]);
 }

@@ -1,3 +1,5 @@
+// gcc main.c opcodes.c -o program
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "opcodes.h"
@@ -5,57 +7,7 @@
 #define MEMORY_MAX (1<<16)
 uint16 memory[MEMORY_MAX];  // 65536 LOCATIONS IN RAM
 
-enum
-  {
-    OP_BR = 0, // BRACH
-    OP_ADD,  //ADD
-    OP_LD,  //LOAD
-    OP_ST,  // STORE
-    OP_JSR,  // JUMP REGISTER
-    OP_AND,  // BITWISE AND
-    OP_LDR,  // LOAD REGISTER
-    OP_STR,  // STORE REGISTER
-    OP_RTI,  // UNUSED
-    OP_NOT,  // BITWISE NOT
-    OP_LDI,  //LOAD INDIRECT
-    OP_STI,  // STORE INDIRECT
-    OP_JMP,  //JUMP
-    OP_RES,  //RESERVED (UNUSED)
-    OP_LEA,  //LOAD EFFECTIVE ADDRESS
-    OP_TRAP  //EXECUTE TRAP
 
-  };
-
-enum
-{
-  FL_POS = 1<<0, // POSITIVE
-  FL_ZRO = 1<<1, //ZERO
-  FL_NEG = 1<<2
-};
-
-uint16 sign_extend(uint16 x, int bit_count)
-{
-  if(x>>(bit_count-1) & 1){
-    x |= (0xFFFF<<bit_count);
-  }
-
-  return x;
-}
-
-void update_flags(uint16 r){
-
-  if(reg[r] == 0){
-    reg[R_COND] = FL_ZRO;
-  }
-  else if(reg[r]>>15){
-    reg[R_COND] = FL_NEG;
-  }
-  else{
-    reg[R_COND] = FL_POS;
-  }
-}
-
-//int read_image(auto image);
 
 
 int main (int argc, const char* argv[])
