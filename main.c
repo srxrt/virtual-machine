@@ -71,11 +71,69 @@ void update_flags(uint16 r){
   }
 }
 
+uint16 mem_read(uint16 addr){}
+
+// ADD
+void ADD(uint16 instr)
+{
+  // destination register
+  uint16 r0 = (instr >> 9) & 0x7;
+
+  // first operand
+  uint16 r1 = (instr >> 6) & 0x7;
+
+  //whether we are in immediate mode
+  uint16 imm_flag = (instr >> 5) & 0x1;
+
+  if(imm_flag)
+    {
+      uint16 imm5 = sign_extend(instr & 0x1F, 5);
+      reg[r0] = reg[r1] + imm5;
+    }
+  else
+    {
+      uint16 r2 = instr & 0x7;
+      reg[r0] = reg[r1] + reg[r2];
+    }
+
+  update_flags(r0);
+}
+
+
+void LDI(uint16 instr)
+{
+  // dest register
+  uint16 r0 = (instr >>9) & 0x7;
+
+  // PCoffset9
+  uint16 pc_offset = sign_extend(instr >> 0x1FF, 9);
+
+  // add pc_offset to the current PC, look at that memory to get the final address
+  reg[r0] = mem_read(mem_read([R_PC]+pc_offset));
+  update_flags(r0);
+}
 
 
 int main (int argc, const char* argv[])
 {
   // laod arguments
+  if(argc<2)
+    {
+      // show usage string
+      printf("lc3 [image-file1] ...\n");
+      exit(2);
+      
+    }
+  
+  for(int j = 1; j<argc;++j)
+    {
+      if(!read_image(argv[j]))
+	{
+	  printf("failed to load image: %s\n", argv[j]);
+	  exit(1);
+	}
+    }
+  
   // setup
   
   // since only one condition flag should be set at any given time,
@@ -91,12 +149,18 @@ int main (int argc, const char* argv[])
   int running = 1;
   while(running)
     {
-      // FETCH THE INSTRUCTION
-      //      uint16 instr = mem_read(reg[R_PC]++);
-      //      uint16 op = instr>>12;
+      // FETCH THE 
+      uint16 instr = mem_read(reg[R_PC]++);
+      uint16 op = instr>>12;
 
-      //      switch(op)
+      switch(op)
 	{
+	case OP_ADD:
+	  ADD(instr);
+	  break;
+	case OP_LDI:
+	  LDI(instr);
+	  break;
 	  
 	}
     }
