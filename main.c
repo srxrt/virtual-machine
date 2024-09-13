@@ -12,41 +12,14 @@ uint16 reg[R_COUNT];
 
 int main (int argc, const char* argv[])
 {
-    // laod arguments
-    if(argc<2)
-      {
-        // show usage string
-        printf("lc3 [image-file1] ...\n");
-        exit(2);
-
-      }
-
-    for(int j = 1; j<argc;++j)
-      {
-        if(1)       //(!read_image(argv[j]))
-          {
-            printf("failed to load image: %s\n", argv[j]);
-            exit(1);
-          }
-      }
-
-    // setup
-
-    // since only one condition flag should be set at any given time,
-    // set the Z flag
-    reg[R_COND] = FL_ZRO;
-
-    //set the PC starting position
-    // 0x3000 is the default
-
-    enum{PC_START = 0x3000};
-    reg[R_PC] = PC_START;
+    load_args(argc, argv);  // laod arguments
+    reg[R_COND] = FL_ZRO;  // set the Z flag
+    reg[R_PC] = PC_START;  // 0x3000 is the default starting position
 
     int running = 1;
     while(running)
       {
-        // FETCH THE
-        uint16 instr = mem_read(reg[R_PC]++);
+        uint16 instr = mem_read(reg[R_PC]++); // fetch instruction
         uint16 op = instr>>12;
 
         switch(op)

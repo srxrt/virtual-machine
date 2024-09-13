@@ -9,9 +9,7 @@ static uint16 memory[MEMORY_MAX];  // 65536 LOCATIONS IN RAM
 // registers array
 static uint16 reg[R_COUNT];
 
-
-// sign extend
-uint16 sign_extend(uint16 x, int bit_count)
+uint16 sign_extend(uint16 x, int bit_count) // sign extends bits to 16 bit data
 {
   if(x>>(bit_count-1) & 1){
     x |= (0xFFFF<<bit_count);
@@ -19,8 +17,7 @@ uint16 sign_extend(uint16 x, int bit_count)
   return x;
 }
 
-// update flags
-void update_flags(uint16 r)
+void update_flags(const uint16 r) // this updates condition flags
 {
   if(reg[r] == 0){
     reg[R_COND] = FL_ZRO;
@@ -33,15 +30,36 @@ void update_flags(uint16 r)
   }
 }
 
-
-// mem_read
-uint16 mem_read(uint16 mem_address)
+uint16 mem_read(const uint16 mem_address) // reads from the memory location
 {
     return mem_address;
 }
 
-void mem_write(uint16 address, uint16 reg)
+void mem_write(const uint16 address, uint16 reg) // writes to a memory location
 {}
+
+int read_image(const char* arg) // reads the image
+{return 1;}
+
+void load_args(int argc, const char* argv[]) // load arguments
+{
+  if(argc<2)
+      {
+        // show usage string
+        printf("lc3 [image-file1] ...\n");
+        exit(2);
+
+      }
+
+    for(int j = 1; j<argc;++j)
+      {
+        if(!read_image(argv[j]))
+          {
+            printf("failed to load image: %s\n", argv[j]);
+            exit(1);
+          }
+      }
+}
 
 
 
@@ -217,6 +235,7 @@ void STR(uint16 instr)
 
 
 /*=============== TRAP =================*/
+
 void TRAP(uint16 instr,int running)
 {
   reg[R_R7] = reg[R_PC];

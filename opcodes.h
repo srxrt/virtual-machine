@@ -4,10 +4,12 @@
 #include <stdint.h>
 typedef uint16_t uint16;
 
-uint16 mem_read(uint16 mem_address);
-void mem_write(uint16 address, uint16 reg);
+uint16 mem_read(const uint16 mem_address);
+void mem_write(const uint16 address, uint16 reg);
 uint16 sign_extend(uint16 x, int bit_count);
-void update_flags(uint16 r);
+void update_flags(const uint16 r);
+int read_image(const char* arg);
+void load_args(int argc, const char* argv[]); //load arguments
 
 // TRAP OPERATIONS
 void GETC();

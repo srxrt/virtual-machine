@@ -1,4 +1,4 @@
-enum
+enum  // registers
   {
     R_R0 = 0,
     R_R1,
@@ -13,8 +13,7 @@ enum
     R_COUNT
   };
 
-// opcodes
-enum
+enum   // opcodes
   {
     OP_BR = 0, // BRACH
     OP_ADD,  //ADD
@@ -35,16 +34,15 @@ enum
 
   };
 
-// FLAGS
-enum
+enum  // FLAGS
 {
   FL_POS = 1<<0, // POSITIVE
   FL_ZRO = 1<<1, //ZERO
   FL_NEG = 1<<2 // NEGATIVE
 };
 
-// TRAP CODES ENUM
-enum
+
+enum // TRAP CODES ENUM
 {
   TRAP_GETC = 0x20, // GET CHARACTER FROM KEYBOARD, NOT ECHOED ONTO THE TERMINAL
   TRAP_OUT = 0x21,   // OUTPUT A CHARACTER
@@ -53,3 +51,5 @@ enum
   TRAP_PUTSP = 0x24, // output a byte string
   TRAP_HALT = 0x25 // halt the program
 };
+
+ enum{PC_START = 0x3000}; // R_PC starting position
