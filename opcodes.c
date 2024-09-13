@@ -1,4 +1,13 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include "opcodes.h"
+#include "enums.h"
+
+#define MEMORY_MAX (1<<16)
+static uint16 memory[MEMORY_MAX];  // 65536 LOCATIONS IN RAM
+
+// registers array
+static uint16 reg[R_COUNT];
 
 
 // sign extend
@@ -26,9 +35,9 @@ void update_flags(uint16 r)
 
 
 // mem_read
-uint16 mem_read(uint16 instruction)
+uint16 mem_read(uint16 mem_address)
 {
-    return instruction;
+    return mem_address;
 }
 
 void mem_write(uint16 address, uint16 reg)
@@ -64,7 +73,7 @@ void ADD(uint16 instr)
 }
 
 // bad opcode
-void BAD_OPCODE()
+void BAD()
 {
     abort();
 }
@@ -203,4 +212,96 @@ void STR(uint16 instr)
     uint16 r1 = (instr >> 6) & 0x7;
     uint16 offset = sign_extend(instr & 0x3F, 6);
     mem_write(reg[r1] + offset, reg[r0]);
+}
+
+
+
+/*=============== TRAP =================*/
+void TRAP(uint16 instr,int running)
+{
+  reg[R_R7] = reg[R_PC];
+
+  switch(instr & 0xFF)
+  {
+    case TRAP_GETC:
+        GETC();
+      break;
+    case TRAP_OUT:
+        OUT();
+      break;
+    case TRAP_PUTS:
+        PUTS();
+      break;
+    case TRAP_IN:
+        IN();
+      break;
+    case TRAP_PUTSP:
+        PUTSP();
+      break;
+    case TRAP_HALT:
+        HALT();
+      break;
+
+  }
+
+}
+
+
+void GETC()
+{
+  // read a single ascii character
+  reg[R_R0] = (uint16)getchar();
+  update_flags(R_R0);
+}
+
+void OUT()
+{
+  putc((char)reg[R_R0], stdout);
+  fflush(stdout);
+}
+
+
+void PUTS()
+{
+  // one character per word
+  uint16* c = memory + reg[R_R0];
+  while(*c)
+  {
+    putc((char)*c, stdout);
+    ++c;
+  }
+  fflush(stdout);
+}
+
+void IN()
+{
+  printf("Enter a character: ");
+    char c = getchar();
+    putc(c, stdout);
+    fflush(stdout);
+    reg[R_R0] = (uint16)c;
+    update_flags(reg[R_R0]);
+}
+void PUTSP()
+{
+    /* one char per byte (two bytes per word)
+       here we need to swap back to
+       big endian format */
+    uint16* c = memory + reg[R_R0];
+    while (*c)
+    {
+        char char1 = (*c) & 0xFF;
+        putc(char1, stdout);
+        char char2 = (*c) >> 8;
+        if (char2) putc(char2, stdout);
+        ++c;
+    }
+    fflush(stdout);
+}
+
+void HALT(int running)
+{
+  puts("HALT");
+  fflush(stdout);
+  running = 0;
 }
