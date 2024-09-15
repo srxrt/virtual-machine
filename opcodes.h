@@ -2,14 +2,19 @@
 #define OPCODES_H
 
 #include <stdint.h>
+#include <stdio.h>
 typedef uint16_t uint16;
 
 uint16 mem_read(const uint16 mem_address);
 void mem_write(const uint16 address, uint16 reg);
 uint16 sign_extend(uint16 x, int bit_count);
 void update_flags(const uint16 r);
-int read_image(const char* arg);
 void load_args(int argc, const char* argv[]); //load arguments
+
+// reading image file
+int read_image(const char* image_path);
+uint16 swap16(uint16 x);
+void read_image_file(FILE* file); // reads lc-3 program into memory
 
 // TRAP OPERATIONS
 void GETC();

@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include "opcodes.h"
 #include "enums.h"
 
@@ -32,14 +31,11 @@ void update_flags(const uint16 r) // this updates condition flags
 
 uint16 mem_read(const uint16 mem_address) // reads from the memory location
 {
-    return mem_address;
+  return mem_address;
 }
 
 void mem_write(const uint16 address, uint16 reg) // writes to a memory location
 {}
-
-int read_image(const char* arg) // reads the image
-{return 1;}
 
 void load_args(int argc, const char* argv[]) // load arguments
 {
@@ -61,20 +57,55 @@ void load_args(int argc, const char* argv[]) // load arguments
       }
 }
 
+uint16 swap16(uint16 x)  // swaps from big endian to little endian
+{
+  return (x<<8) | (x>>8);
+}
+
+void read_image_file(FILE* file)  // reads the image file bytes into memory
+{
+  uint16 origin;
+  fread(&origin, sizeof(origin), 1, file);
+  origin = swap16(origin);
+
+  uint16 max_read = MEMORY_MAX - origin;
+  uint16* p = memory + origin;
+  size_t read = fread(p, sizeof(uint16), max_read, file);
+
+  while(read-- >0) // swap to little endian
+  {
+    *p = swap16(*p);
+    ++p;
+  }
+}
+
+int read_image(const char* image_path) // reads the image
+{
+  FILE* file = fopen(image_path,"rb"); //read binary
+  if(!file)return 0;
+  read_image_file(file);
+  fclose(file);
+  return 1;
+}
 
 
-/*======== OPERATIONS===========*/
+
+
+
+
+
+
+
+
+
+
+/*======== INSTRUCTIONS ===========*/
 
 // ADD
 void ADD(uint16 instr)
 {
-  // destination register
   uint16 r0 = (instr >> 9) & 0x7;
-
-  // first operand
   uint16 r1 = (instr >> 6) & 0x7;
-
-  //whether we are in immediate mode
   uint16 imm_flag = (instr >> 5) & 0x1;
 
   if(imm_flag)
@@ -90,8 +121,8 @@ void ADD(uint16 instr)
   update_flags(r0);
 }
 
-// bad opcode
-void BAD()
+
+void BAD() // bad opcode
 {
     abort();
 }
