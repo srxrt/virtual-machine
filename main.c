@@ -1,17 +1,20 @@
 // gcc main.c opcodes.c -o program
-
 #include <stdlib.h>
-#include "opcodes.h"
 #include "enums.h"
+#include "opcodes.h"
+
 
 #define MEMORY_MAX (1<<16)
 uint16 memory[MEMORY_MAX];
-
 uint16 reg[R_COUNT];
 
 int main (int argc, const char* argv[])
 {
     load_args(argc, argv);  // laod arguments
+    //setup
+    signal(SIGINT, handle_interrupt);
+    disable_input_buffering();
+
     reg[R_COND] = FL_ZRO;  // set the Z flag
     reg[R_PC] = PC_START;  // 0x3000 is the default starting position
 
@@ -73,4 +76,5 @@ int main (int argc, const char* argv[])
               }
       }
       // shutdown
+      restore_input_buffering();
 }

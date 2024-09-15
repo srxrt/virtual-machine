@@ -1,10 +1,23 @@
 #ifndef OPCODES_H
 #define OPCODES_H
+#define LINUX
 
 #include <stdint.h>
 #include <stdio.h>
 typedef uint16_t uint16;
 
+// uint16_t check_key();
+// void restore_input_buffering();
+
+#ifdef LINUX
+#include "linux.h"
+#endif
+
+#ifdef WINDOWS
+#include "windows.h"
+#endif
+
+void handle_interrupt(int signal);
 uint16 mem_read(const uint16 mem_address);
 void mem_write(const uint16 address, uint16 reg);
 

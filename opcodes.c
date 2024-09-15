@@ -8,6 +8,14 @@ static uint16 memory[MEMORY_MAX];  // 65536 LOCATIONS IN RAM
 // registers array
 static uint16 reg[R_COUNT];
 
+
+void handle_interrupt(int signal)
+{
+    restore_input_buffering();
+    printf("\n");
+    exit(-2);
+}
+
 uint16 sign_extend(uint16 x, int bit_count) // sign extends bits to 16 bit data
 {
   if(x>>(bit_count-1) & 1){
@@ -31,7 +39,7 @@ void update_flags(const uint16 r) // this updates condition flags
 
 uint16 mem_read(const uint16 mem_address) // reads from the memory location
 {
-  if(address == MR_KBSR)
+  if(mem_address == MR_KBSR)
   {
     if(check_key())
     {
@@ -43,7 +51,7 @@ uint16 mem_read(const uint16 mem_address) // reads from the memory location
       memory[MR_KBSR] = 0;
     }
   }
-  return memory[address];
+  return memory[mem_address];
 }
 
 void mem_write(const uint16 address, uint16 val) // writes to a memory location
