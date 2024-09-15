@@ -10,7 +10,23 @@ uint16 reg[R_COUNT];
 
 int main (int argc, const char* argv[])
 {
-    load_args(argc, argv);  // laod arguments
+   if(argc<2)
+      {
+        // show usage string
+        printf("lc3 [image-file1] ...\n");
+        exit(2);
+
+      }
+
+    for(int j = 1; j<argc;++j)
+      {
+        if(!read_image(argv[j]))
+          {
+            printf("failed to load image: %s\n", argv[j]);
+            exit(1);
+          }
+      }
+
     //setup
     signal(SIGINT, handle_interrupt);
     disable_input_buffering();
@@ -23,6 +39,10 @@ int main (int argc, const char* argv[])
       {
         uint16 instr = mem_read(reg[R_PC]++); // fetch instruction
         uint16 op = instr>>12;
+       for (int i = 3; i >= 0; i--) {
+        printf("%d", (op >> i) & 1);
+        }
+      printf("\n");
 
         switch(op)
               {
