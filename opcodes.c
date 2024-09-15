@@ -31,11 +31,25 @@ void update_flags(const uint16 r) // this updates condition flags
 
 uint16 mem_read(const uint16 mem_address) // reads from the memory location
 {
-  return mem_address;
+  if(address == MR_KBSR)
+  {
+    if(check_key())
+    {
+      memory[MR_KBSR] = (1 << 15);
+      memory[MR_KBDR] = getchar();
+    }
+    else
+    {
+      memory[MR_KBSR] = 0;
+    }
+  }
+  return memory[address];
 }
 
-void mem_write(const uint16 address, uint16 reg) // writes to a memory location
-{}
+void mem_write(const uint16 address, uint16 val) // writes to a memory location
+{
+  memory[address] = val;
+}
 
 void load_args(int argc, const char* argv[]) // load arguments
 {
@@ -72,7 +86,7 @@ void read_image_file(FILE* file)  // reads the image file bytes into memory
   uint16* p = memory + origin;
   size_t read = fread(p, sizeof(uint16), max_read, file);
 
-  while(read-- >0) // swap to little endian
+  while(read-- > 0) // swap to little endian
   {
     *p = swap16(*p);
     ++p;

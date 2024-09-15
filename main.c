@@ -1,7 +1,6 @@
 // gcc main.c opcodes.c -o program
 
 #include <stdlib.h>
-#include <stdio.h>
 #include "opcodes.h"
 #include "enums.h"
 

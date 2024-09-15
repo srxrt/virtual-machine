@@ -52,4 +52,11 @@ enum // TRAP CODES ENUM
   TRAP_HALT = 0x25 // halt the program
 };
 
- enum{PC_START = 0x3000}; // R_PC starting position
+ enum
+ {PC_START = 0x3000}; // R_PC starting position
+
+ enum
+ {
+  MR_KBSR = 0xFE00, // KEYBOARD STATUS REGISTER
+  MR_KBDR = 0xFE02 // KEYBOARD DATA REGISTER
+ }

@@ -7,6 +7,7 @@ typedef uint16_t uint16;
 
 uint16 mem_read(const uint16 mem_address);
 void mem_write(const uint16 address, uint16 reg);
+
 uint16 sign_extend(uint16 x, int bit_count);
 void update_flags(const uint16 r);
 void load_args(int argc, const char* argv[]); //load arguments
