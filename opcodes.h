@@ -6,12 +6,11 @@
 #include <stdio.h>
 typedef uint16_t uint16;
 
-#ifdef LINUX
-#include "linux.h"
-#endif
-
-#ifdef WINDOWS
+#ifdef WIN32
 #include "windows.h"
+
+#elif defined(__linux__)
+#include "linux.h"
 #endif
 
 void handle_interrupt(int signal);
