@@ -6,7 +6,7 @@
 static uint16 memory[MEMORY_MAX];  // 65536 LOCATIONS IN RAM
 
 // registers array
-static uint16 reg[R_COUNT];
+extern uint16 reg[R_COUNT];
 
 
 void handle_interrupt(int signal)
@@ -109,16 +109,6 @@ int read_image(const char* image_path) // reads the image
   fclose(file);
   return 1;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 /*======== INSTRUCTIONS ===========*/
@@ -289,10 +279,9 @@ void STR(uint16 instr)
 
 /*=============== TRAP =================*/
 
-void TRAP(uint16 instr,int running)
+void TRAP(uint16 instr, int* running)
 {
   reg[R_R7] = reg[R_PC];
-
   switch(instr & 0xFF)
   {
     case TRAP_GETC:
@@ -311,7 +300,7 @@ void TRAP(uint16 instr,int running)
         PUTSP();
       break;
     case TRAP_HALT:
-        HALT();
+        HALT(running);
       break;
 
   }
@@ -331,7 +320,6 @@ void OUT()
   putc((char)reg[R_R0], stdout);
   fflush(stdout);
 }
-
 
 void PUTS()
 {
@@ -371,9 +359,9 @@ void PUTSP()
     fflush(stdout);
 }
 
-void HALT(int running)
+void HALT(int* running)
 {
   puts("HALT");
   fflush(stdout);
-  running = 0;
+  *running = 0;
 }

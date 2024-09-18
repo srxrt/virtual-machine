@@ -6,9 +6,6 @@
 #include <stdio.h>
 typedef uint16_t uint16;
 
-// uint16_t check_key();
-// void restore_input_buffering();
-
 #ifdef LINUX
 #include "linux.h"
 #endif
@@ -53,6 +50,6 @@ void LEA(uint16 instruction); // load effective address
 void ST(uint16 instruction);  // store
 void STI(uint16 instruction); // store indirect
 void STR(uint16 instruction); // store register
-void TRAP(uint16 instruction, int running); // trap operations
+void TRAP(uint16 instruction, int* running); // trap operations
 
 #endif
